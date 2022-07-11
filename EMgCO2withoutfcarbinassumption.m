@@ -46,7 +46,7 @@ R1solveds=[R1solveds R1(1:250000)];
 fcarbinsolveds=[fcarbinsolveds fcarbinsolved(1:250000)];
 fcarboutsolveds=[fcarboutsolveds fcarboutsolved(1:250000)];
 end 
-
+i
 end
 
 %%
@@ -56,26 +56,26 @@ X=ttsolveds/1000;
 
 Xmin=min(X);Xmax=max(X);
 Ymin=min(Y);Ymax=max(Y);
-
+%分割区域大小
 Nx=300;
 Ny=300;
 
-
+%分割的边
 Xedge=linspace(Xmin,Xmax,Nx);
 Yedge=linspace(Ymin,Ymax,Ny);
 
-
+%统计每个区域的点个数（N的xy定义是转置的）
 [N,~,~,binX,binY] = histcounts2(X,Y,[-inf,Xedge(2:end-1),inf],[-inf,Yedge(2:end-1),inf]);
 
 XedgeM=movsum(Xedge,2)/2;
 YedgeM=movsum(Yedge,2)/2;
-
+%构建绘图网格
 [Xedgemesh,Yedgemesh]=meshgrid(XedgeM(2:end),YedgeM(2:end));
 
-%% 
+%% 计算平均值和标准差
 XX=ttsolveds/1000;YY=Rsolveds;
-XX=fix(XX);
-
+XX=round(XX);
+% 统计相同坐标点
 j=1;
 for ii=1:2001
    mRsort(j)=mean(YY(find(XX==(ii-1))));
@@ -92,7 +92,7 @@ for iii=1:200
    Agesort2(iii+1)=iii*10;
 end
 %% 
-
+%绘制pcolor图
 figure(1)
 pcolor(Xedgemesh,Yedgemesh,N'); hold on;
 plot(Agesort2,mmRsort);hold on;plot(Agesort2,mmRsort-eeRsort);plot(Agesort2,mmRsort+eeRsort);hold off;

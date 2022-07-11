@@ -19,7 +19,7 @@ tt=fix(tt*1000);ttindex=tt+1;
 a=1:1:length(tt);
 % plot(tt,a,'o','Markersize',1);
 
-%% definition of paramaters
+% definition of paramaters
 % fcarbin=[0 1]; fcarbout=[0 1]; carbin=[-2.1 -1.5]; frsil=[0 0.8];
 fcarbin=fcarbininter(ttindex)+normrnd(0,0.04,[1 length(tt)]);
 indexss=find(fcarbin>0&fcarbin<1);
@@ -53,7 +53,7 @@ R1solveds=[R1solveds R1(1:250000)];
 fcarbinsolveds=[fcarbinsolveds fcarbinsolved(1:250000)];
 fcarboutsolveds=[fcarboutsolveds fcarboutsolved(1:250000)];
 end 
-
+i
 end
 
 %%
@@ -62,26 +62,32 @@ X=ttsolveds/1000;
 Y=Rsolveds;
 Xmin=min(X);Xmax=max(X);
 Ymin=min(Y);Ymax=max(Y);
-
+%分割区域大小
 Nx=300;
 Ny=300;
 
-
+%分割的边
 Xedge=linspace(Xmin,Xmax,Nx);
 Yedge=linspace(Ymin,Ymax,Ny);
 
-
+%统计每个区域的点个数（N的xy定义是转置的）
 [N,~,~,binX,binY] = histcounts2(X,Y,[-inf,Xedge(2:end-1),inf],[-inf,Yedge(2:end-1),inf]);
 
 XedgeM=movsum(Xedge,2)/2;
 YedgeM=movsum(Yedge,2)/2;
-
+%构建绘图网格
 [Xedgemesh,Yedgemesh]=meshgrid(XedgeM(2:end),YedgeM(2:end));
 
-%% 
+%% 计算平均值和标准差
 XX=ttsolveds/1000;YY=Rsolveds;
-XX=fix(XX);
-
+XX=round(XX);
+% AA=[XX;YY];AA=AA';
+% AAsort=sortrows(AA);
+% Rsolvedssort=AAsort(:,2);
+% Agesort=AAsort(:,1);
+% plot(Agesort,Rsolvedssort);
+% 统计相同坐标点
+j=1;
 for ii=1:2001
    mRsort(j)=mean(YY(find(XX==(ii-1))));
   eRsort(j)=std(YY(find(XX==(ii-1))));
@@ -91,14 +97,14 @@ end
 %%
 mmRsort(1)= mRsort(1);Agesort2(1)=0;
 eeRsort(1)=eRsort(1);
-for iii=1:20
-    mmRsort(iii+1)=mRsort(iii*100+1);
-    eeRsort(iii+1)=eRsort(iii*100+1);
-   Agesort2(iii+1)=iii*100;
+for iii=1:200
+    mmRsort(iii+1)=mRsort(iii*10+1);
+    eeRsort(iii+1)=eRsort(iii*10+1);
+   Agesort2(iii+1)=iii*10;
 end
 %% 
-
+%绘制pcolor图
 figure(1)
 pcolor(Xedgemesh,Yedgemesh,N');hold on;
 plot(Agesort2,mmRsort);hold on;plot(Agesort2,mmRsort-eeRsort);plot(Agesort2,mmRsort+eeRsort);hold off;
-ylim([0.3 0.8]);   
+ylim([-0.2 0.35]);   xlim([0 500]);
